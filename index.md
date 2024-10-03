@@ -49,87 +49,82 @@ Install Sysmon (optional, if using Windows VM):**
 # sysmon -accepteula -i sysmonconfig.xml 
 ```
 
-#### Header 4
 
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
+### **2. Configuring Azure Sentinel**
 
-##### Header 5
+**Enable Azure Sentinel:**
+        In the Azure portal, navigate to Azure Sentinel.
+        Click on Create and choose your existing Log Analytics Workspace or create a new one.
 
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
+**Link Azure Sentinel to your VM:**
+        Go to Data connectors in Azure Sentinel and look for Windows Security Events or Syslog (if using Linux).
+        Enable the relevant connector by configuring the VM as the source.
+      
+        For Windows, you’ll need to install the Log Analytics Agent on the VM to collect security logs:
+            Download the agent from the Log Analytics Workspace -> Advanced settings -> Windows Agents.
+            After installation, connect the agent to your Log Analytics workspace by entering the workspace ID and key.
 
-###### Header 6
+### **3. Setting Up Log Forwarding from VM to Azure Sentinel**
 
-| head1        | head two          | three |
-|:-------------|:------------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
+**For Windows VM:**
 
-### There's a horizontal rule below this.
+    Install the Log Analytics agent on the VM.
+    Configure the agent with your Workspace ID and Primary Key from the Azure portal.
 
-* * *
+**For Linux VM:**
 
-### Here is an unordered list:
+    Use the omsagent to send logs:
 
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
+    bash
 
-### And an ordered list:
+    wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sh onboard_agent.sh -w <WorkspaceID> -s <PrimaryKey>
 
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
+    This will forward Syslog and custom logs to Azure Sentinel.
 
-### And a nested list:
+### **4. Creating Custom Detection Rules in Azure Sentinel**
 
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-
-### Small image
-
-![Octocat](https://github.githubassets.com/images/icons/emoji/octocat.png)
-
-### Large image
-
-![Branching](https://guides.github.com/activities/hello-world/branching.png)
+Azure Sentinel allows for the creation of custom rules to detect specific security events. I created a custom rule to detect successful login attempts.
 
 
-### Definition lists can be used with HTML syntax.
+**Navigate to Detection Rules:**
+        In Azure Sentinel, click on Analytics -> Create Rule.
 
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
+**Define your custom rule:**
+        Name: Successful Login Detection.
+        Tactic: Initial Access.
+        Severity: Medium (or High, depending on your preference).
 
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
-```
+**Rule Logic:**
+        Use Kusto Query Language (KQL) to define the rule. This example detects successful login events from Windows event logs:
 
-```
-The final element.
-```
+        kql
+
+        SecurityEvent
+        | where EventID == 4624
+        | where LogonType == 2
+        | project Account, TimeGenerated, LogonType, Computer
+
+        This query filters for Windows Event ID 4624, which indicates successful logons.
+
+**Set up Alerts:**
+        Configure the rule to trigger an alert whenever a match is found.
+        You can set the rule to run every 5 minutes for real-time monitoring.
+
+### **5. Automating Incident Response with Azure Logic Apps**
+
+To automate incident response, I integrated Azure Logic Apps to send email notifications when a security event is detected.
+
+
+**Create a new Logic App:**
+        In the Azure portal, search for Logic Apps and create a new Logic App.
+
+**Trigger the Logic App with an Alert:**
+        Use the Azure Sentinel Alert as the trigger for your Logic App.
+        Set it to trigger when your custom rule for successful logins is met.
+
+**Action – Send Email Notification:**
+        In the Logic App workflow designer, add an action to send an email via Outlook or SMTP.
+        Customize the email body with details from the alert, such as:
+            User who logged in.
+            Time of the event.
+            IP address (if available).

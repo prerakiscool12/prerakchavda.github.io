@@ -2,33 +2,49 @@
 layout: default
 ---
 
-Text can be **bold**, _italic_, or ~~strikethrough~~.
 
-[Link to another page](./another-page.html).
+# Azure SIEM Deployment
 
-There should be whitespace between paragraphs.
+## Objective:
 
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
+This project focuses on setting up a Security Information and Event Management (SIEM) system using Azure Sentinel to collect, monitor, and analyze security logs from a virtual machine (VM). The setup is designed to simulate a real-world SOC (Security Operations Center) environment, where logs are generated from a running VM and forwarded to Azure Sentinel for real-time security monitoring and alerting.
 
-# Header 1
+## Project Components:
 
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
+**Azure Sentinel** – For SIEM functionality and security log analysis.
 
-## Header 2
+**Azure Virtual Machine** – Simulated a real-world system generating logs for monitoring.
 
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
+**Custom Detection Rules** – Created to alert on specific activities like successful logins.
 
-### Header 3
+**Azure Logic Apps** – For automating email notifications when alerts are triggered.
 
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require('./lang/' + l)
-  return true;
-}
-```
+## Setup Steps:
+
+### **1. Deploying an Azure Virtual Machine (VM)**
+
+#### Log in to the Azure Portal/Create account for Azure:
+      Go to Azure Portal if you have a account: https://portal.azure.com/#home
+      Or create a new Azure account and use the free credit to help deploy a new virtual machine.
+
+  #### Create a new virtual machine:
+        Navigate to “Virtual Machines” in the left-hand menu and click “Create”.
+        Choose your Subscription and Resource Group.
+        Set the Region (I chose East US).
+        Select an Image (e.g., Ubuntu 20.04 or Windows Server).
+        Choose the VM size (I used Standard_B1ms for cost efficiency).
+
+   #### Configure networking:
+        Ensure inbound port rules allow access to port 3389 for RDP (if using Windows) or port 22 for SSH (if using Linux).
+
+ #### Storage settings:
+        Select the storage size, and leave the rest of the options as default.
+
+  #### Create the VM:
+        Once the VM is created, connect to it using SSH or RDP.
+
+ #### Install Sysmon (optional, if using Windows VM):
+        Sysmon generates detailed system event logs. Install using: sysmon -accepteula -i sysmonconfig.xml 
 
 ```ruby
 # Ruby code with syntax highlighting

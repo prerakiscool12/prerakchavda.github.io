@@ -7,7 +7,7 @@ layout: default
 
 ## Objective:
 
-This project focuses on setting up a Security Information and Event Management (SIEM) system using Azure Sentinel to collect, monitor, and analyze security logs from a virtual machine (VM). The setup is designed to simulate a real-world SOC (Security Operations Center) environment, where logs are generated from a running VM and forwarded to Azure Sentinel for real-time security monitoring and alerting.
+This project focuses on setting up a Security Information and Event Management (SIEM) system using Azure Sentinel to collect, monitor, and analyze security logs from a virtual machine (VM). The setup is designed to simulate a real-world SOC (Security Operations Center) environment, where logs are generated from a running VM and forwarded to Azure Sentinel for real-time security monitoring and alerting. This is not meant to be a guide, just a walkthrough of what I did for this project.
 
 ## Project Components:
 
@@ -23,34 +23,30 @@ This project focuses on setting up a Security Information and Event Management (
 
 ### **1. Deploying an Azure Virtual Machine (VM)**
 
-#### Log in to the Azure Portal/Create account for Azure:
+**Log in to the Azure Portal/Create account for Azure:**
       Go to Azure Portal if you have a account: https://portal.azure.com/#home
       Or create a new Azure account and use the free credit to help deploy a new virtual machine.
 
-  #### Create a new virtual machine:
+**Create a new virtual machine:**
         Navigate to “Virtual Machines” in the left-hand menu and click “Create”.
         Choose your Subscription and Resource Group.
         Set the Region (I chose East US).
         Select an Image (e.g., Ubuntu 20.04 or Windows Server).
         Choose the VM size (I used Standard_B1ms for cost efficiency).
 
-   #### Configure networking:
+**Configure networking:**
         Ensure inbound port rules allow access to port 3389 for RDP (if using Windows) or port 22 for SSH (if using Linux).
 
- #### Storage settings:
+**Storage settings:**
         Select the storage size, and leave the rest of the options as default.
 
-  #### Create the VM:
+**Create the VM:**
         Once the VM is created, connect to it using SSH or RDP.
-
- #### Install Sysmon (optional, if using Windows VM):
-        Sysmon generates detailed system event logs. Install using: sysmon -accepteula -i sysmonconfig.xml 
-
+**
+Install Sysmon (optional, if using Windows VM):**
+        Sysmon generates detailed system event logs. Install using: 
 ```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
+# sysmon -accepteula -i sysmonconfig.xml 
 ```
 
 #### Header 4
